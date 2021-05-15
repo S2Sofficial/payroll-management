@@ -12,6 +12,7 @@ import datetime
 
 import subprocess
 
+#Line 16 has to be change for execution in owns database. 
 cnx = create_engine('mysql+pymysql://root:123@localhost:3306/payroll').connect()
 
 
