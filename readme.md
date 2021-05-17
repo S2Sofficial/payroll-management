@@ -13,5 +13,8 @@
 <p> SETTER </p>
 <img scr="https://github.com/S2Sofficial/payroll-management/blob/assets/SETTER.jpg",alt="SETTER table image">
 
+<p> Images of table formed after executing *SQL.txt* </p>
+
+
 
 </html>
