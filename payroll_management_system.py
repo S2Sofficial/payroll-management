@@ -6,39 +6,42 @@
 
 from sqlalchemy import create_engine
 
+import mysql.connector
+
 import pandas as pd
 
 import datetime
 
 import subprocess
 
-cnx = create_engine('mysql+pymysql://root:123@localhost:3306/payroll').connect()
+cnx = create_engine('mysql+pymysql://root:1234@localhost/payroll').connect()
 
+#cnx=mysql.connector.connect (host='localhost',user='u0_a427',password='',database='payroll')
 #------------------------------#
 
 def emp_entry():
-	ec = eval(input("Enter employee code : "))
+	ec= eval(input("Enter employee code : "))
 
-	fn = input("Enter First Name of Employee: ")
+	fn= input("Enter First Name of Employee: ")
 
-	ln = input("Enter Last Name of Employee: ")
+	ln= input("Enter Last Name of Employee: ")
 
-	dg = input("Enter Designation : ")
+	dg= input("Enter Designation : ")
 
 	ge=input("Enter Gender : ")
 
-	db = input("Enter Date of Birth : ")
+	db= input("Enter Date of Birth(YYYY,MM,DD) : ")
 
-	dj = input("Enter Date of Joining : ")
+	dj= input("Enter Date of Joining(YYYY,MM,DD) : ")
 
-	mb =input("Enter Mobile Number : ")
+	mb=input("Enter Mobile Number : ")
 
-	pn =input("Enter PAN Number : ")
+	pn=input("Enter PAN Number : ")
 
 	ac= input("Enter Bank Account Number: ")
-	fc = input("Enter IFSC code of Bank Account : ")
+	fc= input("Enter IFSC code of Bank Account : ")
 
-	sl = eval(input("Enter Pay Level : "))
+	sl= eval(input("Enter Pay Level : "))
 
 	bs=eval(input("Enter Basic Salary: "))
 
@@ -50,110 +53,125 @@ def emp_entry():
 
 	data = [[ec, fn, ln, dg, sl, ge, db, dj, mb, pn, ac, fc,bs,ta,hr,np]]
 
-	df = pd.DataFrame(data,columns=['ecode','fname', 'lname', 'desig', 'level','gender','dob','doj','mob','pan','acno','ifsc','basic','ta','hrayn','npsyn'])
+	df= pd.DataFrame(data,columns=['ECODE','FNAME', 'LNAME', 'DESIG', 'LEVEL','GENDER','DOB','DOJ','MOB','PAN','ACNO','IFSC','BASIC','TA','HRAYN','NPSYN'])
+	print(df)
 
-	df.to_sql(name = 'emp', con = cnx, if_exists = 'append', index = False)
+	df.to_sql(name = 'EMP', con=cnx, if_exists = 'append', index = False)
 
 #------------------------------#
 
 def salary_entry():
-  while True:
-   try:
-   	y = eval(input("Enter the salary year (press enter for current year otherwise input new year: " + str(datetime.datetime.today().strftime('%Y'))))
-   except:
-   	y = str(datetime.datetime.today().strftime('%Y'))
-   break
-    
    while True:
    	try:
-   		m = eval(input("Enter the salary month (press enter for current month otherwise input new month: " + str(datetime.datetime.today().strftime('%m'))))
+   		y= eval(input("Enter the salary year (press enter for current year otherwise input new year: " + str(datetime.datetime.today().strftime('%Y'))))
    	except:
-   		m = str(datetime.datetime.today().strftime('%m'))
-	   	break
+   		y= str(datetime.datetime.today().strftime('%Y'))
+   	break
+   
+   while True:
+   		 try:
+   			 m= eval(input("Enter the salary month (press enter for current month otherwise input new month: " + str(datetime.datetime.today().strftime('%m'))))
+   		 except:
+   		 	m= str(datetime.datetime.today().strftime('%m'))
+	   	 break
+   sql="select * from EMP;"
+	   	 
+   df=pd.read_sql(sql,cnx)
+   print("enter salary details for the "+str(m)+ "/" + str(y))
+	   	 
+   lec=[]
+	   	 
+   llevel=[]
+	   	 
+   lec =df["ECODE"]
+	   	 
+   l1=[]
 
-sql="select * from emp "
+   ly= []
 
-df=pd.read_sql(sql,cnx)
+   lm= []
 
-print("enter salary details for the " + str(m) + "/" + str(y))
-lec=[]
+   allw= []
 
-llevel=[]
+   deduc= []
 
-lec = df["ECODE"]
+   lfee= []
 
-l1=[]
+   it= []
+   
+   for x in df["ECODE"]:
+   		 	print("Employee Code : " + str(x) + "\n")
+   		 	
+   		 	l1.append(eval(input("Enter No of days worked : ")))
+   		 	
+   		 	allw.append(eval(input("Enter other allowance (or 0): ")))
 
-ly = []
+   		 	deduc.append(eval(input("Enter other deductions (or 0): ")))
 
-lm = []
+   		 	it.append(eval(input("Enter income tax to be deducted (or 0): ")))
+	   
+   		 	lfee.append(eval(input("Enter other License fee (or 0): ")))
+   		 	
+   		 	ly.append(y)
+   		 	lm.append(m)
+   		 	
+   sql="select * from PAY;"
+	   
+   df1=pd.read_sql(sql,cnx)
 
-allw = []
+   df1["YEAR"]=ly
 
-deduc = []
+   df1["MONTH"] =lm
 
-lfee = []
+   df1["ECODE"] =lec
 
-it = []
+   df1["NODAYS"] =l1
 
-for x in df["ECODE"]:
-	print("Employee Code : " + str(x) + "\n")
+   df1 = pd.merge(df,df1,on='ECODE')
 
-	l1.append(eval(input("Enter No of days worked : ")))
+   df1["BASIC"] = df1["BASIC"]/30 * df1["NODAYS"]
 
-	allw.append(eval(input("Enter other allowance (or 0): ")))
+   df1["DA"] = df1["BASIC"] * df1['DA']/100
 
-	deduc.append(eval(input("Enter other deductions (or 0): ")))
+   df1["DATA"] = df1["TA"] * df1['DA'] /100
 
-	it.append(eval(input("Enter income tax to be deducted (or 0): ")))
+   df1["HRA"] = df1["TA"] * df1['HRA'] /100
 
-	lfee.append(eval(input("Enter other License fee (or 0): ")))
+   df1["NPS_M"] = (df1["BASIC"] + df1["DA"] ) * 10 /100
 
-	ly.append(y)
-	lm.append(m)
- 	
-sql="select * from pay"
+   df1["OTHER_ALLW"] = allw
 
-df1=pd.read_sql(sql,cnx)
+   df1["GROSS"] = df1["BASIC"] + df1["DA"] + df1["DATA"] + df1["HRA"] + df1["NPS_M"] + df1["OTHER_ALLW"]
 
-df1["YEAR"] = ly
+   df1["NPS_O"] = df1["NPS_M"]
 
-df1["MONTH"] = lm
+   df1["GPF"] = df1["BASIC"] * 6/100
 
-df1["ECODE"] = lec
+   df1["LCFEE"] = lfee
+   
+   df1["ITAX"] = it
 
-df1["NODAYS"] = l1
+   df1["ODEDUCT"] = deduc
 
-df1 = pd.merge(df,df1,on='ECODE')
+   df1["TOTAL_DEDUC"] = df1["ITAX"] + df1["NPS_M"] + df1["NPS_O"] + df1["GPF"] + df1["ODEDUCT"] + df1["LCFEE"]
 
-df1["BASIC"] = df1["BASIC"]/30 * df1["NODAYS"]
+   df1["NETSAL"] = df1["GROSS"] - df1["TOTAL_DEDUC"]
 
-df1["DA"] = df1["BASIC"] * DP/100
+   df1.to_csv ('C:\Payroll\SALARY.csv', mode = 'w')
 
-df1["DATA"] = df1["TA"] * DP /100
+#------------------------------#
 
-df1["HRA"] = df1["TA"] * HP /100
+def per_setter() :
+	dap=eval(input("Enter DA Percentage : "))
 
-df1["NPS_M"] = (df1["BASIC"] + df1["DA"] ) * 10 /100
+	hrp=eval(input("Enter HRA Percentage: ")) 
 
-df1["OTHER_ALLW"] = allw
+	data = [[dap,hrp]]
 
-df1["GROSS"] = df1["BASIC"] + df1["DA"] + df1["DATA"] + df1["HRA"] + df1["NPS_M"] + df1["OTHER_ALLW"]
+	df = pd.DataFrame(data,columns=['dap','hrap'])
 
-df1["NPS_O"] = df1["NPS_M"]
-
-df1["GPF"] = df1["BASIC"] * 6/100
-
-df1["LCFEE"] = lfee
-df1["ITAX"] = it
-
-df1["ODEDUCT"] = deduc
-
-df1["TOTAL_DEDUC"] = df1["ITAX"] + df1["NPS_M"] + df1["NPS_O"] + df1["GPF"] + df1["ODEDUCT"] + df1["LCFEE"]
-
-df1["NETSAL"] = df1["GROSS"] - df1["TOTAL_DEDUC"]
-
-df1.to_csv('C:\Payroll\SALARY.csv', mode = 'w')
+	
+	df.to_sql(name = 'SETTER', con = cnx, if_exists = 'replace', index = False)
 
 #------------------------------#
 
@@ -170,7 +188,7 @@ def Sdf_show():
 #------------------------------#
 
 def Show_Rates():
-	sql = "select * from setter"
+	sql = "select * from SETTER;"
 	df = pd.read_sql(sql, cnx)
 	
 	print(df)
@@ -178,7 +196,7 @@ def Show_Rates():
 #------------------------------#
 
 def Show_EMP():
-	sql = "select * from EMP"
+	sql = "select * from EMP;"
 
 	df = pd.read_sql(sql, cnx)
 
@@ -187,19 +205,20 @@ def Show_EMP():
 #------------------------------#
 
 def Salary_show():
-	subprocess.call('C:\Program Files\Microsoft Office\Office15\excel c:\payroll\salary.csv')
- 
-	DP = 0
+	subprocess.call('C:\payroll\SALARY.csv')
 
-	HP = 0
+#------------------------------#
+DP = 0
 
-	sql="select * from setter"
+HP = 0
 
-	df=pd.read_sql(sql,cnx)
+sql="select * from SETTER;"
 
-	DP = df["dap"][0]
+df=pd.read_sql(sql,cnx)
 
-	HP = df["hrap"][0]
+DP = df["dap"][0]
+
+HP = df["hrap"][0]
 	
 #------------------------------#
 
@@ -247,3 +266,6 @@ while (True):
 
 	else:
 		print(" Wrong choice..........")
+		
+		
+#______________________________#
