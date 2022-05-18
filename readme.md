@@ -1,22 +1,20 @@
-<html>
+# Payroll Management System
+![Cover image](https://user-images.githubusercontent.com/75106252/118389322-1ff4c400-b647-11eb-8dea-8cf59eebe9a6.png)
 
-<h1>Payroll Management System</h1>
-<img src="https://user-images.githubusercontent.com/75106252/118389322-1ff4c400-b647-11eb-8dea-8cf59eebe9a6.png" alt="Cover image">
+A payroll management system is a tool - predominantly a software program that enables your business to handle all your employee's financial records in a hassle-free, automated fashion. It refers to the process of administration of a company's employee's financial record. </p>
 
-<p>A payroll management system is a tool - predominantly a software program that enables your business to handle all your employee's financial records in a hassle-free, automated fashion. It refers to the process of administration of a company's employee's financial record. </p>
+## Describe Table 
 
-<h3> Describe Table </h3>
+## EMP 
+![emp table](https://raw.githubusercontent.com/S2Sofficial/payroll-management/master/EMP.jpg)
 
-<p> EMP </p>
-<img src="https://github.com/S2Sofficial/payroll-management/blob/assets/EMP.jpg",alt="EMP table image">
+## PAY 
+![pay](https://raw.githubusercontent.com/S2Sofficial/payroll-management/master/PAY.jpg)
 
-<p> PAY </p>
-<img src="https://github.com/S2Sofficial/payroll-management/blob/assets/PAY.jpg",alt="PAY table image">
+##  SETTER 
+![setter](https://raw.githubusercontent.com/S2Sofficial/payroll-management/master/SETTER.jpg)
 
-<p> SETTER </p> 
-<img scr="https://user-images.githubusercontent.com/75106252/118443733-e33dd100-b709-11eb-822a-cd5a05604946.jpg",alt="SETTER">
+## Table image 
+ Images of table formed after executing ```SQL.txt```
 
-table image
-<p> Images of table formed after executing *SQL.txt* </p>
 
-</html>
